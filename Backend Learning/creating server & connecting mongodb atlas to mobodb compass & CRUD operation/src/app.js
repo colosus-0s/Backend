@@ -3,8 +3,6 @@ const app = express()
 const noteModel = require("./models/note.model")
 
 app.use(express.json())
-
-
 app.post('/notes',async(req,res)=>{
       const data = req.body
       
