@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
+const userModel = require('../models/user.model')
 
-router.post("/create", (req, res) => {
+router.post("/create", async(req, res) => {
   const token = req.cookies.token;
 
   if (!token) {
@@ -11,12 +12,22 @@ router.post("/create", (req, res) => {
     });
   }
 
-  try {
-    res.send("post has been created successfully");
-  } catch (err) {}
+try {
+    const decoded = jwt.verify(token,process.env.JWT_SECRET)
+    const user = await userModel.findOne({
+      _id:decoded.id
+    })    
+    console.log(user)
 
-  const decoded = jwt.verify(token, process.env.JWT_SECRET);
-  console.log(decoded)
+    res.status(200).json({
+      message:"User fetched successfully"
+    })
+} catch (error) {
+  res.status(401).json({
+    message:"Token is invalid"
+  })
+  
+}
 });
 
 module.exports = router;
